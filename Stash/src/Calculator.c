@@ -1,9 +1,9 @@
 /*
- ###########################################
- # Name: Calculator-prototype with <3      #
- # Made by: Roma Skvortsov, for free using #
- # Powered by: IVT's group                 #
- ###########################################
+ ############################################
+ # Name: Calculator-prototype with <3       #
+ # Made by: Roman Skvortsov, for free using #
+ # Powered by: IVT's group                  #
+ ############################################
 */
 #include <stdio.h>
 #include <stdlib.h>
