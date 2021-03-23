@@ -30,7 +30,7 @@ int main(void)
 			scanf(" %c",&choice);
 			switch(choice)
 			{
-			case'+':
+			case'+':  //  an addition case
 				printf("Enter the size of vectors - ");
 				scanf(" %i", &size);
 				a = malloc(size*sizeof(int));
@@ -48,13 +48,13 @@ int main(void)
 				printf("Result - ");
 					for (int i=0;i<size;i++)
 						{
-						printf("%f ",a[i]+b[i]);
+						printf("%f ",a[i]+b[i]);  //  a print of addition result
 						}
 				printf("\n");
 				free(a);
 				free(b);
 				break;
-			case'-':
+			case'-':  //	a subtraction case
 					printf("Enter the size of vectors - ");
 					scanf(" %i", &size);
 					a = malloc(size*sizeof(int));
@@ -72,13 +72,13 @@ int main(void)
 					printf("Result - ");
 						for (int i=0;i<size;i++)
 							{
-							printf("%f ",a[i]-b[i]);
+							printf("%f ",a[i]-b[i]);  //  a print of subtraction result
 							}
 					printf("\n");
 					free(a);
 					free(b);
 					break;
-			case'*':
+			case'*':  //	a multiplication case
 					printf("Enter the size of vectors - ");
 					scanf(" %i", &size);
 					a = malloc(size*sizeof(int));
@@ -96,7 +96,7 @@ int main(void)
 					printf("Result - ");
 						for (int i=0;i<size;i++)
 							{
-							printf("%f ",a[i]*b[i]);
+							printf("%f ",a[i]*b[i]);  //  a print of multiplication result
 							}
 					printf("\n");
 					free(a);
