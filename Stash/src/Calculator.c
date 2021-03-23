@@ -25,7 +25,7 @@ int main(void)
 		scanf(" %c",&choice);
 		switch(choice)
 		{
-		case'v':
+		case'v':  //a case when vectors are chosen
 			printf("Select operation \(+(addition) -(subtraction) *(multiplication)\n ");
 			scanf(" %c",&choice);
 			switch(choice)
@@ -104,7 +104,7 @@ int main(void)
 					break;
 			}
 			break;
-		case'n':
+		case'n':  //a case when numbers are chosen
 		//  operation selection "menu"
 		printf("Select operation \(+(addition) -(subtraction) /(division) *(multiplication) ^(exponentiation) !(factorial))\n ");
 		scanf(" %c",&choice);
