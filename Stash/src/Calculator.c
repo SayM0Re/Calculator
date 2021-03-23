@@ -1,7 +1,8 @@
 /*
  ############################################
  # Name: Calculator-prototype with <3       #
- # Made by: Roman Skvortsov, for free using #
+ # Made by: Roman Skvortsov                 #
+ # Copyright: for free using                #
  # Powered by: IVT's group                  #
  ############################################
 */
@@ -10,6 +11,8 @@
 // some variables are moved to the top for comfortably work
 char choice, back; //choice - for select operation, back - for program reuse
 float num1, num2; //num1 - first number, num2 - second number
+float *a,*b;
+int size;
 
 int main(void)
 {
@@ -18,6 +21,90 @@ int main(void)
 	printf("Welcome, %%user%% ! \n");  //  welcome text for any user
 	do
 	{
+		printf("What do you want to work with? (v - vectors, n - numbers)\n ");  //  offer to choose between two types
+		scanf(" %c",&choice);
+		switch(choice)
+		{
+		case'v':
+			printf("Select operation \(+(addition) -(subtraction) *(multiplication)\n ");
+			scanf(" %c",&choice);
+			switch(choice)
+			{
+			case'+':
+				printf("Enter the size of vectors - ");
+				scanf(" %i", &size);
+				a = malloc(size*sizeof(int));
+				b = malloc(size*sizeof(int));
+				printf("Enter the first vector - \n");
+					for (int i=0;i<size;i++)
+						{
+						scanf(" %f",&a[i]);
+						}
+				printf("Enter the second vector - \n");
+					for (int i=0;i<size;i++)
+						{
+						scanf(" %f",&b[i]);
+						}
+				printf("Result - ");
+					for (int i=0;i<size;i++)
+						{
+						printf("%f ",a[i]+b[i]);
+						}
+				printf("\n");
+				free(a);
+				free(b);
+				break;
+			case'-':
+					printf("Enter the size of vectors - ");
+					scanf(" %i", &size);
+					a = malloc(size*sizeof(int));
+					b = malloc(size*sizeof(int));
+					printf("Enter the first vector - \n");
+						for (int i=0;i<size;i++)
+							{
+							scanf(" %f",&a[i]);
+							}
+					printf("Enter the second vector - \n");
+						for (int i=0;i<size;i++)
+							{
+							scanf(" %f",&b[i]);
+							}
+					printf("Result - ");
+						for (int i=0;i<size;i++)
+							{
+							printf("%f ",a[i]-b[i]);
+							}
+					printf("\n");
+					free(a);
+					free(b);
+					break;
+			case'*':
+					printf("Enter the size of vectors - ");
+					scanf(" %i", &size);
+					a = malloc(size*sizeof(int));
+					b = malloc(size*sizeof(int));
+					printf("Enter the first vector - \n");
+						for (int i=0;i<size;i++)
+							{
+							scanf(" %f",&a[i]);
+							}
+					printf("Enter the second vector - \n");
+						for (int i=0;i<size;i++)
+							{
+							scanf(" %f",&b[i]);
+							}
+					printf("Result - ");
+						for (int i=0;i<size;i++)
+							{
+							printf("%f ",a[i]*b[i]);
+							}
+					printf("\n");
+					free(a);
+					free(b);
+					break;
+			}
+			break;
+		case'n':
 		//  operation selection "menu"
 		printf("Select operation \(+(addition) -(subtraction) /(division) *(multiplication) ^(exponentiation) !(factorial))\n ");
 		scanf(" %c",&choice);
@@ -113,9 +200,14 @@ int main(void)
 				}
 				break;
 			default:  //  a report that this operation does not exist
-				printf("Unknown operation or you missed the button. Try again :)\n");
+				printf("Unknown operation or you pressed the wrong button. Try again :)\n");
 				break;
 			}
+			break;
+		default:
+			printf("Maybe you pressed the wrong button. Try again :)\n ");
+			break;
+		}
 		//  feedback
 		printf("Start over? (y/n)\n");
 		scanf(" %c",&back);
