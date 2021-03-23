@@ -9,12 +9,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 // some variables are moved to the top for comfortably work
-char choice, back; //choice - for select operation, back - for program reuse
-float num1, num2; //num1 - first number, num2 - second number
-float *a,*b;
-int size;
+char choice, back;  // choice - for select operation, back - for program reuse
+float num1, num2;  // num1 - first number, num2 - second number
+float *a,*b;  // alley A and B for operation with vectors
+int size;  // size - size of vectors
 
-int main(void)
+int main(void)  // beginning of program
 {
 	setvbuf(stdout, NULL, _IONBF, 0);
 	setvbuf(stderr, NULL, _IONBF, 0);
@@ -25,7 +25,7 @@ int main(void)
 		scanf(" %c",&choice);
 		switch(choice)
 		{
-		case'v':
+		case'v':  // a case of operations with vectors
 			printf("Select operation \(+(addition) -(subtraction) *(multiplication)\n ");
 			scanf(" %c",&choice);
 			switch(choice)
@@ -104,7 +104,7 @@ int main(void)
 					break;
 			}
 			break;
-		case'n':
+		case'n':  // a case of operation with numbers
 		//  operation selection "menu"
 		printf("Select operation \(+(addition) -(subtraction) /(division) *(multiplication) ^(exponentiation) !(factorial))\n ");
 		scanf(" %c",&choice);
@@ -217,12 +217,12 @@ int main(void)
 	{
 		printf("Have a nice day! <3\n");
 	}
-	else  //  a little joke for those who like to poke the wrong buttons
+	else  //  a little joke for those who like to press the wrong buttons
 	{
 		printf("You entered a WRONG key - system will detonate!\n"
 				".......******.......\n"
 				".....***BOOM***.....\n"
 				".......******.......\n");
 	}
-	return 0;
+	return 0;  //  ending of program
 }
