@@ -25,12 +25,12 @@ int main(void)
 		scanf(" %c",&choice);
 		switch(choice)
 		{
-		case'v':  //a case when vectors are chosen
+		case'v':
 			printf("Select operation \(+(addition) -(subtraction) *(multiplication)\n ");
 			scanf(" %c",&choice);
 			switch(choice)
 			{
-			case'+':  //  an addition case
+			case'+':
 				printf("Enter the size of vectors - ");
 				scanf(" %i", &size);
 				a = malloc(size*sizeof(int));
@@ -45,16 +45,16 @@ int main(void)
 						{
 						scanf(" %f",&b[i]);
 						}
-				printf("Result - ");
+				printf("Result - \n");
 					for (int i=0;i<size;i++)
 						{
-						printf("%f ",a[i]+b[i]);  //  a print of addition result
+						printf("%f + %f = %f\n",a[i],b[i],a[i]+b[i]);
 						}
 				printf("\n");
 				free(a);
 				free(b);
 				break;
-			case'-':  //	a subtraction case
+			case'-':
 					printf("Enter the size of vectors - ");
 					scanf(" %i", &size);
 					a = malloc(size*sizeof(int));
@@ -69,16 +69,16 @@ int main(void)
 							{
 							scanf(" %f",&b[i]);
 							}
-					printf("Result - ");
+					printf("Result - \n");
 						for (int i=0;i<size;i++)
 							{
-							printf("%f ",a[i]-b[i]);  //  a print of subtraction result
+							printf("%f - %f = %f\n",a[i],b[i],a[i]-b[i]);
 							}
 					printf("\n");
 					free(a);
 					free(b);
 					break;
-			case'*':  //	a multiplication case
+			case'*':
 					printf("Enter the size of vectors - ");
 					scanf(" %i", &size);
 					a = malloc(size*sizeof(int));
@@ -93,10 +93,10 @@ int main(void)
 							{
 							scanf(" %f",&b[i]);
 							}
-					printf("Result - ");
+					printf("Result - \n");
 						for (int i=0;i<size;i++)
 							{
-							printf("%f ",a[i]*b[i]);  //  a print of multiplication result
+							printf("%f * %f = %f\n",a[i],b[i],a[i]*b[i]);
 							}
 					printf("\n");
 					free(a);
@@ -104,7 +104,7 @@ int main(void)
 					break;
 			}
 			break;
-		case'n':  //a case when numbers are chosen
+		case'n':
 		//  operation selection "menu"
 		printf("Select operation \(+(addition) -(subtraction) /(division) *(multiplication) ^(exponentiation) !(factorial))\n ");
 		scanf(" %c",&choice);
@@ -115,28 +115,28 @@ int main(void)
 				scanf(" %f",&num1);
 				printf("Enter the second number - ");
 				scanf(" %f",&num2);
-				printf("%f\n",num1+num2);  //  a print of addition result
+				printf("%f + %f = %f\n",num1,num2,num1+num2);  //  a print of addition result
 				break;
 			case '-':  //	a subtraction case
 				printf("Enter the first number - ");
 				scanf(" %f",&num1);
 				printf("Enter the second number - ");
 				scanf(" %f",&num2);
-				printf("%f\n",num1-num2);  //  a print of subtraction result
+				printf("%f - %f = %f\n",num1,num2,num1-num2);  //  a print of subtraction result
 				break;
 			case '*':  //	a multiplication case
 				printf("Enter the first number - ");
 				scanf(" %f",&num1);
 				printf("Enter the second number - ");
 				scanf(" %f",&num2);
-				printf("%f\n",num1*num2);  //  a print of multiplication result
+				printf("%f * %f = %f\n",num1,num2,num1*num2);  //  a print of multiplication result
 				break;
 			case '/':  //	a division case
 				printf("Enter the first number - ");
 				scanf(" %f",&num1);
 				printf("Enter the second number - ");
 				scanf(" %f",&num2);
-				printf("%f\n",num1/num2);  //  a print of division result
+				printf("%f / %f = %f\n",num1,num2,num1/num2);  //  a print of division result
 				break;
 			case '^':  //  an exponentiation case
 				printf("Enter the first number - ");
@@ -152,7 +152,7 @@ int main(void)
 						{
 							st=st*num1;  //  the exponentiation process
 						}
-						printf("%f\n",st);  //  a print of exponentiation result
+						printf("%f ^ %f = %f\n",num1,num2,st);  //  a print of exponentiation result
 					}
 					else if((int)num2 < 0) //  a negative number check
 					{
@@ -163,11 +163,11 @@ int main(void)
 						{
 							st=st*x;  //  the exponentiation process
 						}
-						printf("%f\n",st);  //  a print of exponentiation result
+						printf("%f ^ %f = %f\n",num1,num2,st);  //  a print of exponentiation result
 					}
 					else
 					{
-						printf("1.000000\n");
+						printf("%f ^ %f = 1.000000\n",num1,num2);
 					}
 				}
 				else  //  a report about incorrect type of number
@@ -187,7 +187,7 @@ int main(void)
 						{
 							r = r*i;
 						}
-						printf("%lli\n",r);  //  a print of factorial result
+						printf("%f\! = %lli\n",num1,r);  //  a print of factorial result
 					}
 					else  //  a report about 'number <=0'
 					{
