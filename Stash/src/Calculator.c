@@ -37,7 +37,7 @@ int main(void)  // beginning of program
 
     FILE *in,*out;
     in = fopen(input,"r");
-    out = fopen(output,"w");
+    out = fopen(output,"a");
 		while(feof(in) == 0)
 		{
 
