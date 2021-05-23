@@ -17,282 +17,260 @@
 #include <stdio.h>
 #include <stdlib.h>
 // some variables are moved to the top for comfortably work
-char choice, back, input[50], output[50];  // choice - for select operation, back - for program reuse, input/output - for file name
-float num1, num2;                          // num1 - first number, num2 - second number
-float *a,*b;                               // alley A and B for operation with vectors
-int size;                                  // size - size of vectors
+struct listIn {
+    char operation, back;
+    int size;
+    float *first, *second;
+    struct listIn *next;
+};
 
-int main(void)  // beginning of program
-{
-	setvbuf(stdout, NULL, _IONBF, 0);
-	setvbuf(stderr, NULL, _IONBF, 0);
-	printf("Welcome, %%user%% ! \n");  //  welcome text for any user
+struct listOut {
+    float *result;
+    struct listOut *nextResult;
+};
+// function for working with numbers
+float* numberFunction(char operation, float *number1, float *number2){
+    float r = 1, st = 1, *resultNumber;
+    resultNumber = malloc(sizeof(float));
+    switch (operation){  //  operation fetch block
+        case '+':  //  an addition case
+            resultNumber[0] = number1[0] + number2[0];
+            return resultNumber;  //  a result of addition
+        case '-':  //	a subtraction case
+            resultNumber[0] = number1[0] - number2[0];
+            return resultNumber;  //  a result of subtraction
+        case '*':  //	a multiplication case
+            resultNumber[0] = number1[0] * number2[0];
+            return resultNumber;  //  a result of multiplication
+        case '/':  //	a division case
+            if (number2 != 0){
+                resultNumber[0] = number1[0] / number2[0];
+                return resultNumber;  //  a result of division
+            }
+            else{
+                return 0;
+            }
+        case '!':  //  factorial case
+            for (int i=1; i <= number1[0]; i++){
+                r = r*i;
+            }
+            resultNumber[0] = r;
+            return resultNumber;  //  a result of factorial
+        case '^':  //  an exponentiation case
+            for (int i=1; i <= number2[0]; i++){
+                st = st*number1[0];
+            }
+            resultNumber[0] = st;
+            return resultNumber;  //  a result of exponentiation
+    }
+    return number1;  //  results of first...
+    return number2;  //  ...and second numbers
+    free(resultNumber);
+    free(number1);
+    free(number2);
+}
+// function for working with vectors
+float* vectorFunction(char operation, int size, float *vector1, float *vector2){
+    float *resultVector;
+    switch (operation){  //  operation fetch block
+        case '+':  //  an addition case
+            resultVector = malloc(size * sizeof(float));
+            for (int i=0; i < size; i++){
+                resultVector[i] = vector1[i] + vector2[i];
+            }
+            return resultVector;  //  a result of addition
+        case '-':  //	a subtraction case
+            resultVector = malloc(size * sizeof(float));
+            for (int i=0; i < size; i++){
+                resultVector[i] = vector1[i] - vector2[i];
+            }
+            return resultVector;  //  a result of subtraction
+        case '*':  //	a multiplication case
+            resultVector = malloc(sizeof(float));
+            resultVector[0] = 0;
+            for (int i=0; i < size; i++){
+                resultVector[0] = resultVector[0] + vector1[i] * vector2[i];
+            }
+            return resultVector;  //  a result of multiplication
+    }
+    return vector1;  //  results of first...
+    return vector2;  //  ...and second vectors
+    free(vector1);
+    free(vector2);
+    free(resultVector);
+}
+//  adding numbers
+float* pushNumber(FILE *fileIn, int size){
+    float *number;
+    number = malloc(size * sizeof(float));
+    for (int i=0; i < size; i++){
+        fscanf(fileIn, "%f", &number[i]);
+    }
+    return number;
+}
+//  adding current items to the `listIn`
+void pushCurrent(struct listIn *current, FILE *fileIn){
+    struct listIn *currentElement = malloc(sizeof(struct listIn));
+    fscanf(fileIn, " %c", &currentElement->back);
+    fscanf(fileIn, " %c", &currentElement->operation);
+    if (currentElement->back == 'v'){
+        fscanf(fileIn, " %i", &currentElement->size);
+    }
+    else{
+        currentElement->size = 1;
+    }
+    if (currentElement->operation != '!'){
+        currentElement->first = pushNumber(fileIn, currentElement->size);
+        currentElement->second = pushNumber(fileIn, currentElement->size);
+    }
+    else{
+        currentElement->first = pushNumber(fileIn, currentElement->size);
+        currentElement->second = NULL;
+    }
+    currentElement->next = NULL;
+    current->next = currentElement;
+}
 
-	do
-	{
-	printf("Enter the input \"name.txt\" - ");
-	scanf(" %s", &input);
-	printf("Enter the output \(you can reselect the output file\) \"name.txt\" - ");
-	scanf(" %s", &output);
+void resultCurrent(struct listOut *currentResult, struct listIn *current){
+    struct listOut *localResult = malloc(sizeof(struct listIn));
+    if (current->back == 'v'){
+        localResult->result = vectorFunction(current->operation, current->size, current->first, current->second);
+    }
+    else{
+        localResult->result = numberFunction(current->operation, current->first, current->second);
+    }
+    localResult->nextResult = NULL;
+    currentResult->nextResult = localResult;
+}
 
-    FILE *in,*out;
-    in = fopen(input,"r");
-    out = fopen(output,"a");
-		while(feof(in) == 0)
-		{
+int main(int argc, char *argv[]){
+    setvbuf(stdout, NULL, _IONBF, 0);
+    setvbuf(stderr, NULL, _IONBF, 0);
+    char in[30], out[30];
+    printf("Welcome, %%user%% ! \n");
+    FILE *fileIn, *fileOut;
+    struct listIn *head, *current;
+    struct listOut *headResult, *currentResult;
+    do{
+        printf("Enter the input \"name.txt\" - ");
+        scanf("%s", in);
+        fileIn = fopen(in,"r");  //  opening input file
+        if (fileIn == NULL){
+            printf("File is empty. Try again.\n");
+            while (fileIn == NULL){
+                printf("Enter the input \"name.txt\" - ");
+                scanf(" %s", in);
+                fileIn = fopen(in,"r");
+            }
+        }
+        printf("Enter the output \(you can reselect the output file\) \"name.txt\" - ");
+        scanf("%s", out);
+        if (feof(fileIn) == 0){
+            head = malloc(sizeof(struct listIn));
+            fscanf(fileIn, " %c", &head->back);
+            fscanf(fileIn, " %c", &head->operation);
+            if (head->back == 'v'){
+                fscanf(fileIn, " %i", &head->size);
+            }
+            else{
+                head->size = 1;
+            }
+            if (head->operation != '!'){
+                head->first = pushNumber(fileIn, head->size);
+                head->second = pushNumber(fileIn, head->size);
+            }
+            else{
+                head->first = pushNumber(fileIn, head->size);
+                head->second = NULL;
+            }
+            current = head;
+            while (feof(fileIn) == 0){
+                pushCurrent(current, fileIn);
+                current = current->next;
+            }
+            headResult = malloc(sizeof(struct listOut));
+            current = head;
+            if (current->back == 'v'){
+                headResult->result = vectorFunction(current->operation, current->size, current->first, current->second);
+            }
+            else{
+                headResult->result = numberFunction(current->operation, current->first, current->second);
+            }
+            headResult->nextResult = NULL;
+            current = current->next;
+            currentResult = headResult;
+            while (current != NULL) {
+                resultCurrent(currentResult, current);
+                current = current->next;
+                currentResult = currentResult->nextResult;
+            }
+            current = head;
+            currentResult = headResult;
+            fclose(fileIn);  //  closing input file
 
-			fprintf(out, "What do you want to work with? (v - vectors, n - numbers)\n ");  //  offer to choose between two types
-			fscanf(in, " %c",&choice);
-			fprintf(out, "Selected: %c \n",choice);
-			switch(choice)
-			{
-			case'v':  // a case of operations with vectors
-				fprintf(out, "Select operation \(+(addition) -(subtraction) *(multiplication) \n");
-				fscanf(in, " %c",&choice);
-				fprintf(out, "Selected: %c \n",choice);
-				switch(choice)
-				{
-				case'+':  //  an addition case
-					fprintf(out, "Enter the size of vectors - ");
-					fscanf(in, " %i", &size);
-					fprintf(out, "%i \n",size);
-					a = malloc(size*sizeof(int));
-					b = malloc(size*sizeof(int));
-					fprintf(out, "Enter the first vector  - ");
-						for (int i=0;i<size;i++)
-							{
-							fscanf(in, " %f",&a[i]);
-							}
-						for (int i=0;i<size;i++)
-							{
-							fprintf(out, "%.3f ",a[i]);  //  a print of addition result
-							}
-					fprintf(out, " \n");
-					fprintf(out, "Enter the second vector - ");
-						for (int i=0;i<size;i++)
-							{
-							fscanf(in, " %f",&b[i]);
-							}
-						for (int i=0;i<size;i++)
-							{
-							fprintf(out, "%.3f ",b[i]);  //  a print of addition result
-							}
-					fprintf(out, " \n");
-					fprintf(out, "Result: \n");
-						for (int i=0;i<size;i++)
-							{
-							fprintf(out, "%.3f + %.3f = %.3f \n",a[i],b[i],a[i]+b[i]);  //  a print of addition result
-							}
-					fprintf(out, " \n");
-					free(a);
-					free(b);
-					break;
-				case'-':  //	a subtraction case
-					fprintf(out, "Enter the size of vectors - ");
-					fscanf(in, " %i", &size);
-					fprintf(out, "%i \n",size);
-					a = malloc(size*sizeof(int));
-					b = malloc(size*sizeof(int));
-					fprintf(out, "Enter the first vector  - ");
-						for (int i=0;i<size;i++)
-							{
-							fscanf(in, " %f",&a[i]);
-							}
-						for (int i=0;i<size;i++)
-							{
-							fprintf(out, "%.3f ",a[i]);  //  a print of addition result
-							}
-					fprintf(out, " \n");
-					fprintf(out, "Enter the second vector - ");
-						for (int i=0;i<size;i++)
-							{
-							fscanf(in, " %f",&b[i]);
-							}
-						for (int i=0;i<size;i++)
-							{
-							fprintf(out, "%.3f ",b[i]);  //  a print of addition result
-							}
-					fprintf(out, " \n");
-					fprintf(out, "Result: \n");
-						for (int i=0;i<size;i++)
-							{
-							fprintf(out, "%.3f - %.3f = %.3f \n",a[i],b[i],a[i]-b[i]);  //  a print of addition result
-							}
-					fprintf(out, " \n");
-					free(a);
-					free(b);
-					break;
-				case'*':    //	a multiplication case
-					fprintf(out, "Enter the size of vectors - ");
-					fscanf(in, " %i", &size);
-					fprintf(out, "%i \n",size);
-					a = malloc(size*sizeof(int));
-					b = malloc(size*sizeof(int));
-					fprintf(out, "Enter the first vector  - ");
-						for (int i=0;i<size;i++)
-							{
-							fscanf(in, " %f",&a[i]);
-							}
-						for (int i=0;i<size;i++)
-							{
-							fprintf(out, "%.3f ",a[i]);  //  a print of addition result
-							}
-					fprintf(out, " \n");
-					fprintf(out, "Enter the second vector - ");
-						for (int i=0;i<size;i++)
-							{
-							fscanf(in, " %f",&b[i]);
-							}
-						for (int i=0;i<size;i++)
-							{
-							fprintf(out, "%.3f ",b[i]);  //  a print of addition result
-							}
-					fprintf(out, " \n");
-					fprintf(out, "Result: \n");
-						for (int i=0;i<size;i++)
-							{
-							fprintf(out, "%.3f * %.3f = %.3f \n",a[i],b[i],a[i]*b[i]);  //  a print of addition result
-							}
-					fprintf(out, "\n");
-					free(a);
-					free(b);
-					break;
-				}
-				break;
-			case'n':  // a case of operation with numbers
-			//  operation selection "menu"
-			fprintf(out, "Select operation \(+(addition) -(subtraction) /(division) *(multiplication) ^(exponentiation) !(factorial)) \n ");
-			fscanf(in, " %c",&choice);
-			fprintf(out, "Selected: %c \n",choice);
-				switch(choice)  //  operation fetch block
-				{
-				case '+':  //  an addition case
-					fprintf(out, "Enter the first number - ");
-					fscanf(in, " %f",&num1);
-					fprintf(out, "%f \n",num1);
-					fprintf(out, "Enter the second number - ");
-					fscanf(in, " %f",&num2);
-					fprintf(out, "%f \n",num2);
-					fprintf(out, "Result: %f + %f = %f\n",num1,num2,num1+num2);  //  a print of addition result
-					break;
-				case '-':  //	a subtraction case
-					fprintf(out, "Enter the first number - ");
-					fscanf(in, " %f",&num1);
-					fprintf(out, "%f \n",num1);
-					fprintf(out, "Enter the second number - ");
-					fscanf(in, " %f",&num2);
-					fprintf(out, "%f \n",num2);
-					fprintf(out, "Result: %f - %f = %f\n",num1,num2,num1-num2);  //  a print of subtraction result
-					break;
-				case '*':  //	a multiplication case
-					fprintf(out, "Enter the first number - ");
-					fscanf(in, " %f",&num1);
-					fprintf(out, "%f \n",num1);
-					fprintf(out, "Enter the second number - ");
-					fscanf(in, " %f",&num2);
-					fprintf(out, "%f \n",num2);
-					fprintf(out, "Result: %f * %f = %f\n",num1,num2,num1*num2);  //  a print of multiplication result
-					break;
-				case '/':  //	a division case
-					fprintf(out, "Enter the first number - ");
-					fscanf(in, " %f",&num1);
-					fprintf(out, "%f \n",num1);
-					fprintf(out, "Enter the second number - ");
-					fscanf(in, " %f",&num2);
-					fprintf(out, "%f \n",num2);
-					fprintf(out, "Result: %f / %f = %f\n",num1,num2,num1/num2);  //  a print of division result
-					break;
-				case '^':  //  an exponentiation case
-					fprintf(out, "Enter the first number - ");
-					fscanf(in, " %f",&num1);
-					fprintf(out, "%f \n",num1);
-					fprintf(out, "Enter the second number(integer) - ");
-					fscanf(in, " %f",&num2);
-					fprintf(out, "%f \n",num2);
-					if (num2 - (int)num2 == 0)  //  a non-float number check
-					{
-						if ((int)num2 > 0)  //  a positive number check
-						{
-							float st = 1;  //  st - 'степень'
-							for (int i=1;i<num2+1;i++)  //  beginning cycle of exponentiation
-							{
-								st=st*num1;  //  the exponentiation process
-							}
-							fprintf(out, "Result: %f ^ %f = %f \n",num1,num2,st);  //  a print of exponentiation result
-						}
-						else if((int)num2 < 0)  //  a negative number check
-						{
-							float x = 1/num1;           //  flip the number due to the negative exponent
-							num2 = -num2;               //  replacing negative with positive
-							float st = 1;               //  st - 'степень'
-							for (int i=1;i<num2+1;i++)  //  beginning cycle of exponentiation
-							{
-								st=st*x;                //  the exponentiation process
-							}
-							fprintf(out, "Result: %f ^ %f = %f \n",num1,num2,st);  //  a print of exponentiation result
-						}
-						else
-						{
-							fprintf(out, "Result: %f ^ %f = 1.000000 \n",num1,num2);
-						}
+            fileOut = fopen(out, "a");  //  opening output file
+            while (current != NULL){
+                fprintf(fileOut,"What do you want to work with? (v - vectors, n - numbers) \n ");  //  offer to choose between two types
+				fprintf(fileOut, "Selected: %c \n",current->back);
+                if (current->back == 'v'){  // a case of operations with vectors
+                    fprintf(fileOut,"Enter the size of vectors - ");
+                    fprintf(fileOut,"%i \n",current->size);
+                    fprintf(fileOut,"Enter the first vector  - ");
+                    for(int i=0; i < current->size ;i++){
+						fprintf(fileOut,"%.3f ",current->first[i]);
 					}
-					else  //  a report about incorrect type of number
-					{
-						fprintf(out, "Try again :( (Enter an integer in \"second number\") \n");
+                    fprintf(fileOut, " \n");
+                    fprintf(fileOut,"Enter the second vector - ");
+                    for(int i=0; i < current->size ;i++){
+						fprintf(fileOut,"%.3f ",current->second[i]);
 					}
-					break;
-				case '!':  //  factorial case
-					fprintf(out, "Enter the number(integer) - ");
-					fscanf(in, " %f",&num1);
-					fprintf(out, "%f \n",num1);
-					if (num1 - (int)num1 == 0)  //  a non-float number check
-					{
-						if (num1 > 0)  //  a positive number check
-						{
-							long long int r = 1;        //  the beginning of the cycle of multiplying...
-							for (int i=1;i<num1+1;i++)  //...the number by the previous one for the factorial
-							{
-								r = r*i;
-							}
-							fprintf(out, "Result: %f\! = %lli \n" ,num1 ,r);  //  a print of factorial result
-						}
-						else  //  a report about 'number <=0'
-						{
-							fprintf(out, "Try again :( (Enter an integer more than 0) \n");
-						}
-					}
-					else  //  a report about incorrect type of number
-					{
-						fprintf(out, "Try again :( (Enter an integer) \n");
-					}
-					break;
-				default:  //  a report that this operation does not exist
-					fprintf(out, "Unknown operation or you pressed the wrong button. Try again :) \n");
-					break;
-				}
-				break;
-			default:  //  a report about incorrect input among the possible 'n' and 'v'
-				fprintf(out, "Maybe you pressed the wrong button. Try again :) \n ");
-				break;
-			}
-			fprintf(out, " \n");  //  add an empty line if you need to perform another operation...
-								//  ...and output it to the file that was used earlier
-		}
-        fclose(in);          //  closing input file
-        fclose(out);         //  closing output file
+                    fprintf(fileOut, " \n");
+                    fprintf(fileOut,"Select operation (+(addition) -(subtraction) *(multiplication)) \n ");  //  operation selection "menu"
+                    fprintf(fileOut,"Selected: %c \n",current->operation);
+                    fprintf(fileOut, "Result: \n");
+                    if (current->operation != '*') {
+                        for (int i = 0; i < current->size; i++) {
+                            fprintf(fileOut, "%.3f %c %.3f = %.3f \n", current->first[i], current->operation,current->second[i], currentResult->result[i]);
+                        }
+                    }
+                    else {
+                        fprintf(fileOut, "( ");
+                        for (int i = 0; i < current->size; i++) {
+                            fprintf(fileOut,"%.3f ",current->first[i]);
+                        }
+                        fprintf(fileOut, ")");
+                        fprintf(fileOut, " * ");
+                        fprintf(fileOut, "( ");
+                        for(int i=0; i < current->size ;i++){
+						    fprintf(fileOut,"%.3f ",current->second[i]);
+					    }
+                        fprintf(fileOut, ") ");
+                        fprintf(fileOut, "=  %.3f \n", currentResult->result[0]);
+                    }
 
+					fprintf(fileOut, " \n");
+                }
+                else if (current->back == 'n'){    // a case of operation with numbers
+                    fprintf(fileOut,"Select operation \(+(addition) -(subtraction) /(division) *(multiplication) ^(exponentiation) !(factorial)) \n ");
+                    fprintf(fileOut,"Selected: %c \n",current->operation);
+                    fprintf(fileOut, "%f %c %f = %f \n", current->first[0], current->operation,current->second[0], currentResult->result[0]);
+                }
+                current = current->next;
+                currentResult = currentResult->nextResult;
+                fprintf(fileOut, " \n");
+            }
+
+            fclose(fileOut);  //  closing output file
+        }
 		//  feedback
 		printf("Start over? (y/n) \n");
-		scanf(" %c",&back);
-
+		scanf(" %c",&current->back);
 	}
-	while(back == 'y');  //  waiting 'y' from %user%
-	if (back == 'n')     //  waiting 'n' from %user%
-	{
+	while(current->back == 'y');  //  waiting 'y' from %user%
+	if (current->back == 'n'){     //  waiting 'n' from %user%
 		printf("Have a nice day! <3 \n");
 	}
-	else  //  a little joke for those who like to press the wrong buttons
-	{
+	else{  //  a little joke for those who like to press the wrong buttons
 		printf("You entered a WRONG key - system will detonate!\n"
 				".......******.......\n"
 				".....***BOOM***.....\n"
