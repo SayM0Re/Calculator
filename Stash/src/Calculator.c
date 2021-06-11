@@ -109,6 +109,7 @@ int main(int argc, char *argv[]) {
 						sprintf(lineExpression, "%lf - %lf = %lf",queue.headIn->firstNum[0],queue.headIn->secondNum[0], res); //  a print of subtraction result
 						break;
 					case '*': 	//	a multiplication case
+						res = queue.headIn->firstNum[0] * queue.headIn->secondNum[0];
 						lineExpression = malloc(((int)queue.headIn->firstNum[0]+(int)queue.headIn->secondNum[0]+(int) res + 3 * 7+ 2 * 3 + 1)* sizeof(char));
 						sprintf(lineExpression, "%lf * %lf = %lf",queue.headIn->firstNum[0],queue.headIn->secondNum[0], res); //  a print of multiplication result
 						break;
